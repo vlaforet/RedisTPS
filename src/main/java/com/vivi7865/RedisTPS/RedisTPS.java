@@ -49,7 +49,6 @@ public class RedisTPS extends JavaPlugin implements Listener {
 		saveDefaultConfig();
 		new Config(this, dataFolder);
 		
-		//this.getCommand("spawnset").setExecutor(new SpawnSetCommand());
 		
 		Bukkit.getPluginManager().registerEvents(this, this);
 		
