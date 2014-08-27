@@ -1,6 +1,12 @@
 redis-server: localhost
 redis-port: 6379
 redis-password: none
+
+#Must be unique 
 server-id: "serverID"
 
+#For NTP synchronized heartbeats. Leave blank to disable this, server time will be used.
 NTP-host: "0.europe.pool.ntp.org"
+
+#Interval in seconds between each check on redis server (default: 3)
+check-interval: 3

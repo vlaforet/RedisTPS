@@ -1,4 +1,4 @@
 name: RedisTPS
-version: 0.6
+version: ${pom.version}
 main: com.vivi7865.RedisTPS.RedisTPS
 author: vivi7865

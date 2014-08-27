@@ -12,7 +12,6 @@ import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.TimeInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -58,8 +57,13 @@ public class RedisTPS extends JavaPlugin implements Listener {
 		
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
             public void run() {
+            	if(pool == null){
+            		getLogger().log(Level.WARNING, "No connection to Redis server");
+            		return;
+            	}
             	long time = getTime();
             	Jedis rsc = pool.getResource();
+            	
                 try {
                     Pipeline pipeline = rsc.pipelined();
                     pipeline.hset("RedisTPS_heartbeats", serverID, String.valueOf(time));
@@ -72,7 +76,7 @@ public class RedisTPS extends JavaPlugin implements Listener {
                     for (String key : response.get().keySet()) {
                     	if (key == serverID) continue;
                     	
-                    	if ((time - Long.parseLong(rsc.hget("RedisTPS_heartbeats", key))) > 350) {
+                    	if ((time - Long.parseLong(rsc.hget("RedisTPS_heartbeats", key))) > (20*Config.getCheckInterval()) + 500) {
                     		getLogger().log(Level.WARNING, "Server " + key + " has no refresh hearbeat for 3 seconds, did it crash ?");
                     		rsc.hdel("RedisTPS_heartbeats", key);
                     	}
@@ -85,38 +89,39 @@ public class RedisTPS extends JavaPlugin implements Listener {
                 	pool.returnResource(rsc);
                 }
             }
-        }, 0, 20*3);
+        }, 20*Config.getCheckInterval(), 20*Config.getCheckInterval());
 		
 	}
 	
 	public long getTime() {
-		
-		try { 
-			NTPUDPClient timeClient = new NTPUDPClient();
-			InetAddress inetAddress;
-			inetAddress = InetAddress.getByName(Config.getNTPHost());
-			TimeInfo timeInfo = timeClient.getTime(inetAddress);
-			long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
-			Date time = new Date(returnTime);
-			return time.getTime();
-		} catch (UnknownHostException e) {
-			getLogger().log(Level.SEVERE, "Unknown host, did your NTP server host is wrong?", e);
-		} catch (IOException e) {
-			getLogger().log(Level.SEVERE, "Unable to get time from NTP server, did your NTP server go away?", e);
+		if (Config.getNTPHost() != null || Config.getNTPHost() != "") {
+			try { 
+				NTPUDPClient timeClient = new NTPUDPClient();
+				InetAddress inetAddress;
+				inetAddress = InetAddress.getByName(Config.getNTPHost());
+				TimeInfo timeInfo = timeClient.getTime(inetAddress);
+				long returnTime = timeInfo.getMessage().getTransmitTimeStamp().getTime();
+				Date time = new Date(returnTime);
+				return time.getTime();
+			} catch (UnknownHostException e) {
+				getLogger().log(Level.SEVERE, "Unknown host, did your NTP server host is wrong?", e);
+			} catch (IOException e) {
+				getLogger().log(Level.SEVERE, "Unable to get time from NTP server, did your NTP server go away?", e);
+			}
 		}
-		return 0;
-	}
-	
-	//@EventHandler
-	public void onPJ(PlayerJoinEvent e) {
-		
+		return System.currentTimeMillis();
 	}
 	
 	public void setServerID(String serverID) {
 		RedisTPS.serverID = serverID;
 	}
 
-	public static JedisPool getPool() {
+	public String getServerID() {
+		return serverID;
+	}
+
+
+	public JedisPool getPool() {
 		return pool;
 	}
 
