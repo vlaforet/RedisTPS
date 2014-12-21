@@ -33,10 +33,12 @@ public class RedisTPS extends JavaPlugin implements Listener {
 			rsc.hdel("RedisTPS_heartbeats", serverID);
 			rsc.hdel("RedisTPS_TPS", serverID);
 			rsc.hdel("RedisTPS_Players", serverID);
+			pool.destroy();
+		} catch (Exception ignore) {
+			pool.destroy();
 		} finally {
 			pool.returnResource(rsc);
 		}
-		pool.destroy();
 	}
 
 	public void onEnable() {
@@ -122,13 +124,11 @@ public class RedisTPS extends JavaPlugin implements Listener {
 				Date time = new Date(returnTime);
 				return time.getTime();
 			} catch (UnknownHostException e) {
-				getLogger().log(Level.SEVERE,
-						"Unknown host, did your NTP server host is wrong?", e);
+				getLogger().log(Level.SEVERE, "Unknown host, did your NTP server host is wrong?", e);
+				getLogger().log(Level.SEVERE, "Using server time");
 			} catch (IOException e) {
-				getLogger()
-						.log(Level.SEVERE,
-								"Unable to get time from NTP server, did your NTP server go away?",
-								e);
+				getLogger().log(Level.SEVERE, "Unable to get time from NTP server, did your NTP server go away?", e);
+				getLogger().log(Level.SEVERE, "Using server time");
 			}
 		}
 		return System.currentTimeMillis();

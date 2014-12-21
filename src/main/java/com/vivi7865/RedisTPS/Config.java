@@ -37,8 +37,7 @@ public class Config {
 		}
 
 		if (serverID == null || serverID.isEmpty()) {
-			throw new RuntimeException(
-					"server-id not specified in configuration or empty");
+			serverID = Bukkit.getServerName();
 		}
 		plugin.setServerID(serverID);
 
