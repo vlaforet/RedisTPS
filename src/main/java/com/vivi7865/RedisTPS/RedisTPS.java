@@ -44,7 +44,8 @@ public class RedisTPS extends JavaPlugin implements Listener {
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
-		} catch (IOException ignore) {}
+		} catch (IOException ignore) {
+		}
 
 		dataFolder = this.getDataFolder();
 
@@ -53,7 +54,8 @@ public class RedisTPS extends JavaPlugin implements Listener {
 
 		Bukkit.getPluginManager().registerEvents(this, this);
 
-		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new TPS(), 100L, 1L);
+		Bukkit.getServer().getScheduler()
+				.scheduleSyncRepeatingTask(this, new TPS(), 100L, 1L);
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new Runnable() {
 			public void run() {
@@ -82,8 +84,14 @@ public class RedisTPS extends JavaPlugin implements Listener {
 						if (key == serverID)
 							continue;
 
-						if ((time - Long.parseLong(rsc.hget("RedisTPS_heartbeats", key))) > (20 * Config.getCheckInterval()) + 500) {
-							getLogger().log(Level.WARNING, "Server " + key + " has no refreshed hearbeat for 3 seconds, did it crash ?");
+						if ((time - Long.parseLong(rsc.hget(
+								"RedisTPS_heartbeats", key))) > (20 * Config
+								.getCheckInterval()) + 500) {
+							getLogger()
+									.log(Level.WARNING,
+											"Server "
+													+ key
+													+ " has no refreshed hearbeat for 3 seconds, did it crash ?");
 							rsc.hdel("RedisTPS_heartbeats", key);
 						}
 					}
