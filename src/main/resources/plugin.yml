@@ -1,4 +1,4 @@
-name: RedisTPS
-version: 0.7
+name: ${artifactId}
+version: ${version}
 main: com.vivi7865.RedisTPS.RedisTPS
-author: vivi7865
+author: ${author}

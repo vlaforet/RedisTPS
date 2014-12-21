@@ -39,3 +39,4 @@ manifest.mf
 */src/main/lombok
 
 package.sh
+home.sh
