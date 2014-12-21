@@ -31,8 +31,7 @@ public class Config {
 		ntpHost = conf.getString("NTP-host");
 		checkInterval = conf.getInt("check-interval", 3);
 
-		if (redisPassword != null
-				&& (redisPassword.isEmpty() || redisPassword.equals("none"))) {
+		if (redisPassword != null && (redisPassword.isEmpty() || redisPassword.equals("none"))) {
 			redisPassword = null;
 		}
 
@@ -51,26 +50,18 @@ public class Config {
 						JedisPoolConfig config = new JedisPoolConfig();
 						config.setMaxTotal(-1);
 						config.setJmxEnabled(false);
-						plugin.setPool(new JedisPool(config, redisServer,
-								redisPort, 0, finalRedisPassword));
+						plugin.setPool(new JedisPool(config, redisServer, redisPort, 0, finalRedisPassword));
+						
 						rsc = plugin.getPool().getResource();
-						if (rsc.hexists("RedisTPS_heartbeats",
-								plugin.getServerID())) {
-							Long lastHB = Long.parseLong(rsc.hget(
-									"RedisTPS_heartbeats", plugin.getServerID()));
-							if (lastHB != null
-									&& plugin.getTime() < lastHB + 15000) {
-								plugin.getLogger()
-										.log(Level.SEVERE,
-												"This instance is a possible imposter instance");
-								plugin.getLogger()
-										.log(Level.SEVERE,
-												"For security reason RedisTPS will now disable itself");
-								plugin.getLogger()
-										.log(Level.SEVERE,
-												"If this instance restart from crash please wait 15 seconds before restart");
-								throw new RuntimeException(
-										"RedisTPS possible imposter instance");
+						rsc.clientSetname("RedisTPS-" + plugin.getServerID());
+						
+						if (rsc.hexists("RedisTPS_heartbeats", plugin.getServerID())) {
+							Long lastHB = Long.parseLong(rsc.hget("RedisTPS_heartbeats", plugin.getServerID()));
+							if (lastHB != null && plugin.getTime() < lastHB + 15000) { 
+								plugin.getLogger().log(Level.SEVERE, "This instance is a possible imposter instance");
+								plugin.getLogger().log(Level.SEVERE, "For security reason RedisTPS will now disable itself");
+								plugin.getLogger().log(Level.SEVERE, "If this instance restart from crash please wait 15 seconds before restart");
+								throw new RuntimeException("RedisTPS possible imposter instance");
 							}
 						}
 					} catch (NumberFormatException ignored) {
