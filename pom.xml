@@ -71,6 +71,10 @@
 			<url>https://hub.spigotmc.org/nexus/content/groups/public</url>
 		</repository>
 		<repository>
+  			<id>bukkit-repo</id>
+  			<url>http://repo.bukkit.org/content/groups/public/</url>
+  		</repository>
+		<repository>
 			<id>MCstats</id>
 			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
@@ -81,7 +85,6 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.7.9-R0.2</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
