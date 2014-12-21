@@ -1,0 +1,48 @@
+.TPS-box li {
+float: left;
+width: 25%;
+padding: 10px;
+font-size: 10px;
+line-height: 0.8;
+text-align: center;
+vertical-align:middle;
+border: 1px solid #fff
+}
+
+.TPS-low {
+background-color: #FF0000
+}
+
+.TPS-down {
+background-color: #FFFF00
+}
+
+.TPS-normal {
+background-color: #FFAB00
+}
+
+.TPS-high {
+background-color: #f9f9f9
+}
+
+.TPS-class{
+display:block;
+text-align:center;
+word-wrap:break-word
+}
+
+.TPS-box-list {
+padding-left:0;
+list-style:none
+}
+
+.container {
+margin-left: 25px;
+margin-bottom: 15px
+}
+
+@media (min-width: 768px){
+.TPS-box-list li {
+width: 9.5%;
+font-size: 15px
+}}
